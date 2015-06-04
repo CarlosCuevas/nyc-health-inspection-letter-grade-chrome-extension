@@ -1,0 +1,103 @@
+#inspectionCard{
+        height: 125px;
+        width: 100px;
+        text-align: center;
+        border: 1px solid #cccccc;
+        position: relative;
+        box-shadow: 2px 2px 2px #cccccc;
+}
+
+#inspectionDate{
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        position: absolute;
+        bottom: 0px;
+        left: 2px;
+}
+
+/*Grades*/
+.gradeA{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/a.png');
+}
+
+.gradeB{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/b.png');
+}
+
+.gradeC{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/c.png');
+}
+
+.gradePending{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/pending.png');
+}
+
+.gradeClosed{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/closed.png');
+}
+
+.noResultsFound{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/noResultsFound.png');
+}
+
+.notYetGraded{
+        background-image: url('chrome-extension://__MSG_@@extension_id__/images/notYetGraded.png');
+}
+
+/*Sites*/
+.yelp{
+        right: 85px;
+        float: right;
+}
+
+.zagat{
+        float: right;
+        left: 165px;
+        bottom: 510px;
+}
+
+.seamless{
+        float: right;
+        right: 100px;
+        bottom: 15px;
+}
+
+.menupages{
+        float: right;
+        right: 360px;
+        bottom: 215px;
+}
+
+.opentable{
+        left: 15px;
+}
+
+/*Spinner*/
+
+.inspectionSpinner {
+        height: 125px;
+        width: 100px;
+        position: relative;
+}
+
+.cube1, .cube2 {
+        background-color: #333;
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        top: 0;
+        left: 0;
+  
+        -webkit-animation: cubemove 1.8s infinite ease-in-out;
+}
+
+.cube2 {
+        -webkit-animation-delay: -0.9s;
+}
+
+@-webkit-keyframes cubemove {
+        25% { -webkit-transform: translateX(90px) rotate(-90deg) scale(0.5) }
+        50% { -webkit-transform: translateX(90px) translateY(115px) rotate(-180deg) }
+        75% { -webkit-transform: translateX(0px) translateY(115px) rotate(-270deg) scale(0.5) }
+        100% { -webkit-transform: rotate(-360deg) }
+}
