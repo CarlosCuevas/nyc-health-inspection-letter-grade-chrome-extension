@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "NYC Restaurant Health Inspection Letter Grade",
-  "description": "Displays the health inspection letter grade for restaurants in New York City on Yelp, Zagat, Seamless, Menupages, and Foursquare",
-  "version": "0.4.1",
+  "description": "Displays the health inspection letter grade for restaurants in New York City on Yelp, Zagat, Menupages, and Foursquare",
+  "version": "0.5.0",
   "homepage_url": "https://github.com/CarlosCuevas",
   "icons": {
     "16": "icons/icon16.png",
@@ -11,8 +11,7 @@
     "128": "icons/icon128.png"
   },
    "content_scripts": [{
-        "matches": ["*://*.yelp.com/biz/*", 
-                    "*://*.seamless.com/food-delivery/*",
+        "matches": ["*://*.yelp.com/biz/*",
                     "*://*.menupages.com/restaurants/*",
                     "*://*.zagat.com/r/*",
                     "*://*.foursquare.com/*",

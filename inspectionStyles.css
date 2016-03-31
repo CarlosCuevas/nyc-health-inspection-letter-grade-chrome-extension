@@ -46,20 +46,15 @@
 
 /*Sites*/
 .yelp{
-        right: 85px;
+        right: 45px;
         float: right;
 }
 
 .zagat{
+        margin: 25px;
         float: right;
         left: 165px;
-        bottom: 510px;
-}
-
-.seamless{
-        float: right;
-        right: 100px;
-        bottom: 15px;
+        bottom: 410px;
 }
 
 .menupages{
