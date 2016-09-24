@@ -31,24 +31,24 @@
         switch(site){
             case 'yelp':
                 selectors.nameSelector                      = document.querySelector('.biz-page-title');
-                selectors.addressSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > span > li > strong > address > span:nth-child(1)');
-                selectors.zipcodeSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > span > li > strong > address > span:nth-child(5)');
+                selectors.addressSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address > span:nth-child(1)');
+                selectors.zipcodeSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address > span:nth-child(5)');
                 selectors.phoneNumberSelector               = document.querySelector('.biz-phone');
                 selectors.insertCardBeforeThisElement       = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-header.clearfix > div.biz-page-header-right');
                 break;
             case 'zagat':
                 selectors.nameSelector                      = document.querySelector('#main-content-title');
-                selectors.addressSelector                   = document.querySelector('#content > div.place-post > div.place-editorial-review > div.place-resume > p > span:nth-child(1)');
-                selectors.phoneNumberSelector               = document.querySelector('#content > div.place-post > div.place-editorial-review > div.place-resume > p');
-                selectors.zipcode                           = document.querySelector('#content > div.place-post > div.place-editorial-review > div.place-resume > p > span:nth-child(6)');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#content > div.place-post > div.place-editorial-review > div.review-left > div.place-review-body > p.review-help-link.review-modal-link.desktop');
+                selectors.addressSelector                   = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span:nth-child(1)');
+                selectors.phoneNumberSelector               = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span.hidden-mobile');
+                selectors.zipcode                           = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span:nth-child(6)');
+                selectors.insertCardBeforeThisElement       = document.querySelector('#sidebar > div:nth-child(3)');
                 break;
             case 'menupages':
                 selectors.nameSelector                      = document.querySelector('#restaurant-info > div.head > h1');
                 selectors.addressSelector                   = document.querySelector('#restaurant-info > div.head > ul > li.address.adr > span.addr.street-address');
                 selectors.zipcodeSelector                   = document.querySelector('#restaurant-info > div.head > ul > li.address.adr > span.city-zip > span.postal-code');
                 selectors.phoneNumberSelector               = document.querySelector('#restaurant-info > div.head > ul > li.phonenew');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#content-primary');
+                selectors.insertCardBeforeThisElement       = document.querySelector('#content-secondary > div');
                 break;
             case 'foursquare':
                 selectors.nameSelector                      = document.querySelector('#container > div > div.contents > div.wideColumn > div.venueInfoSection > div.venueHeader > div.primaryInfo > div.venueNameSection > h1');

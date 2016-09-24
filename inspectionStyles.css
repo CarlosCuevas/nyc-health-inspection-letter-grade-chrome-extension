@@ -52,15 +52,6 @@
 
 .zagat{
         margin: 25px;
-        float: right;
-        left: 165px;
-        bottom: 410px;
-}
-
-.menupages{
-        float: right;
-        right: 360px;
-        bottom: 215px;
 }
 
 .opentable{
@@ -82,7 +73,7 @@
         position: absolute;
         top: 0;
         left: 0;
-  
+
         -webkit-animation: cubemove 1.8s infinite ease-in-out;
 }
 
