@@ -31,8 +31,8 @@
         switch(site){
             case 'yelp':
                 selectors.nameSelector                      = document.querySelector('.biz-page-title');
-                selectors.addressSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address > span:nth-child(1)');
-                selectors.zipcodeSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address > span:nth-child(5)');
+                selectors.addressSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address');
+                selectors.zipcodeSelector                   = selectors.addressSelector;
                 selectors.phoneNumberSelector               = document.querySelector('.biz-phone');
                 selectors.insertCardBeforeThisElement       = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-header.clearfix > div.biz-page-header-right');
                 break;
@@ -89,12 +89,12 @@
          street = wycoff
          */
 
-        /*Opentable has the entire address (i.e. building, street, city, state, and zip code) in one div, with a <br> between the street and city
+        /*Opentable and Yelp has the entire address (i.e. building, street, city, state, and zip code) in one div, with a <br> between the street and city
          e.g.
          111 Wycoff Ave
          <br>
          Brooklyn, NY 11237 */
-        var address = (site === 'opentable')? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
+        var address = (site === 'opentable' || site === 'yelp')? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
 
         var firstSpace = address.indexOf(' ');
         if (firstSpace === -1) throw 'No spaces in address';
@@ -139,7 +139,7 @@
         /*Again, because Opentable stores the entire address in one div, separated by a <br>, another exception is needed.
          The lastChild returns string with the city, state and zip. Regex removes everything that isn't a number (yielding only the zipcode)*/
         if (selectors.zipcodeSelector){ /*Some sites don't provide a zipcode (grubhub)*/
-            restaurantInfo.zipcode = (site === 'opentable')? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
+            restaurantInfo.zipcode = (site === 'opentable' || site === 'yelp')? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
         }
 
         /*remove everything that isn't a number*/
