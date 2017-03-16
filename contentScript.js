@@ -51,11 +51,11 @@
                 selectors.insertCardBeforeThisElement       = document.querySelector('#content-secondary > div');
                 break;
             case 'foursquare':
-                selectors.nameSelector                      = document.querySelector('#container > div > div.contents > div.wideColumn > div.venueInfoSection > div.venueHeader > div.primaryInfo > div.venueNameSection > h1');
-                selectors.addressSelector                   = document.querySelector('#container > div > div.contents > div.wideColumn > div.venueInfoSection > div.venueHeader > div.primaryInfo > div.address > div > span:nth-child(1)');
-                selectors.zipcodeSelector                   = document.querySelector('#container > div > div.contents > div.wideColumn > div.venueInfoSection > div.venueHeader > div.primaryInfo > div.address > div > span:nth-child(4)');
-                selectors.phoneNumberSelector               = document.querySelector('#container > div > div.contents > div.wideColumn > div.venueInfoSection > div.venueAttributes > div.linkBar > div.venueLinkAttr.secondaryAttr.phoneAttr > div.linkAttrValue > span');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#actionBar');
+                selectors.nameSelector                      = document.querySelector('h1.venueName');
+                selectors.addressSelector                   = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.addressBlock.sideVenueBlockRow > div.venueRowContent > div.venueAddress > div > span:nth-child(1)');
+                selectors.zipcodeSelector                   = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.addressBlock.sideVenueBlockRow > div.venueRowContent > div.venueAddress > div > span:nth-child(5)');
+                selectors.phoneNumberSelector               = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div:nth-child(3) > div.venueRowContent > span');
+                selectors.insertCardBeforeThisElement       = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.externalMenuBlock.sideVenueBlockRow');
                 break;
             case 'opentable':
                 selectors.nameSelector                      = document.querySelector('body > div.master-container > section > div.page-header.with-background > div.max-width-wrapper > div > div > div > div > div.profile-header-meta.with-hero > h1');
@@ -404,6 +404,7 @@
 
     };
 
+    //setTimeout(()=>{main()}, 5000);
     main();
 
 })();
