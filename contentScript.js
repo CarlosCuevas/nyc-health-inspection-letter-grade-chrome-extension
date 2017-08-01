@@ -6,7 +6,6 @@
         var supportedSites = [
                 'yelp',
                 'menupages',
-                'zagat',
                 'foursquare',
                 'opentable'
             ],
@@ -36,13 +35,6 @@
                 selectors.phoneNumberSelector               = document.querySelector('.biz-phone');
                 selectors.insertCardBeforeThisElement       = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-header.clearfix > div.biz-page-header-right');
                 break;
-            case 'zagat':
-                selectors.nameSelector                      = document.querySelector('#main-content-title');
-                selectors.addressSelector                   = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span:nth-child(1)');
-                selectors.phoneNumberSelector               = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span.hidden-mobile');
-                selectors.zipcode                           = document.querySelector('#sidebar > div.widget.widget__related-posts.widget--spacer.place-widget-first.widget__place-resume.place-resume > div.place--address > p > span:nth-child(6)');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#sidebar > div:nth-child(3)');
-                break;
             case 'menupages':
                 selectors.nameSelector                      = document.querySelector('#restaurant-info > div.head > h1');
                 selectors.addressSelector                   = document.querySelector('#restaurant-info > div.head > ul > li.address.adr > span.addr.street-address');
@@ -59,7 +51,7 @@
                 break;
             case 'opentable':
                 selectors.nameSelector                      = document.querySelector('body > div.master-container > section > div.page-header.with-background > div.max-width-wrapper > div > div > div > div > div.profile-header-meta.with-hero > h1');
-                selectors.addressSelector                   = document.querySelector('#info > div.content-block-body.no-padding > div > div.content-block-map-info > div > div');
+                selectors.addressSelector                   = document.querySelector('#info > div.content-block-map.no-padding > div.content-block-map-info > div');
                 selectors.zipcodeSelector                   = selectors.addressSelector;
                 selectors.phoneNumberSelector               = document.querySelector('#profile-details > div > div > div:nth-child(2) > p:nth-child(1) > span:nth-child(3)');
                 selectors.insertCardBeforeThisElement       = document.querySelector('#reservation-link');
@@ -404,7 +396,6 @@
 
     };
 
-    //setTimeout(()=>{main()}, 5000);
     main();
 
 })();
