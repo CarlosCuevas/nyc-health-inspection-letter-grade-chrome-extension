@@ -1,18 +1,17 @@
-(function(){
-
+{
     'use strict';
 
-    var determineSite = function(){
-        var supportedSites = [
+    function determineSite() {
+        const supportedSites = [
                 'yelp',
                 'menupages',
                 'foursquare',
                 'opentable'
-            ],
-            url = document.URL.toLowerCase(),
-            site = null;
+            ];
+        const url = document.URL.toLowerCase();
+        let site = null;
 
-        supportedSites.some(function(supportedSite){
+        supportedSites.some(supportedSite => {
             if (url.indexOf(supportedSite) !== -1){
                 site = supportedSite;
                 return true;
@@ -24,10 +23,10 @@
         return site;
     };
 
-    var cacheSelectors = function(site){
-        var selectors = {};
+    function cacheSelectors(site) {
+        const selectors = {};
 
-        switch(site){
+        switch(site) {
             case 'yelp':
                 selectors.nameSelector                      = document.querySelector('.biz-page-title');
                 selectors.addressSelector                   = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-subheader > div.mapbox-container > div > div.mapbox-text > ul > li.u-relative > div > strong > address');
@@ -36,40 +35,39 @@
                 selectors.insertCardBeforeThisElement       = document.querySelector('#wrap > div.biz-country-us > div > div.top-shelf > div > div.biz-page-header.clearfix > div.biz-page-header-right');
                 break;
             case 'menupages':
-                selectors.nameSelector                      = document.querySelector('#restaurant-info > div.head > h1');
-                selectors.addressSelector                   = document.querySelector('#restaurant-info > div.head > ul > li.address.adr > span.addr.street-address');
-                selectors.zipcodeSelector                   = document.querySelector('#restaurant-info > div.head > ul > li.address.adr > span.city-zip > span.postal-code');
-                selectors.phoneNumberSelector               = document.querySelector('#restaurant-info > div.head > ul > li.phonenew');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#content-secondary > div');
+                selectors.nameSelector                      = document.querySelector('.header__restaurant-name');
+                selectors.addressSelector                   = document.querySelector('.address-display');
+                selectors.phoneNumberSelector               = document.querySelector('.restaurant-phone > a');
+                selectors.insertCardBeforeThisElement       = document.querySelector('#cart');
                 break;
             case 'foursquare':
                 selectors.nameSelector                      = document.querySelector('h1.venueName');
                 selectors.addressSelector                   = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.addressBlock.sideVenueBlockRow > div.venueRowContent > div.venueAddress > div > span:nth-child(1)');
                 selectors.zipcodeSelector                   = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.addressBlock.sideVenueBlockRow > div.venueRowContent > div.venueAddress > div > span:nth-child(5)');
                 selectors.phoneNumberSelector               = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div:nth-child(3) > div.venueRowContent > span');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock > div.venueDetails > div.externalMenuBlock.sideVenueBlockRow');
+                selectors.insertCardBeforeThisElement       = document.querySelector('#container > div.venueDetail.hasPhoto > div.contents > div.sidebar > div.sideVenueBlock');
                 break;
             case 'opentable':
-                selectors.nameSelector                      = document.querySelector('body > div.master-container > section > div.page-header.with-background > div.max-width-wrapper > div > div > div > div > div.profile-header-meta.with-hero > h1');
-                selectors.addressSelector                   = document.querySelector('#info > div.content-block-map.no-padding > div.content-block-map-info > div');
+                selectors.nameSelector                      = document.querySelector('[itemprop=name]');
+                selectors.addressSelector                   = document.querySelector('[itemprop=streetAddress]');
                 selectors.zipcodeSelector                   = selectors.addressSelector;
-                selectors.phoneNumberSelector               = document.querySelector('#profile-details > div > div > div:nth-child(2) > p:nth-child(1) > span:nth-child(3)');
-                selectors.insertCardBeforeThisElement       = document.querySelector('#reservation-link');
+                selectors.phoneNumberSelector               = document.querySelector('#overview-section > div:nth-child(4) > div._9490eab7 > div.d62c8227 > div > div:nth-child(1) > div > div:nth-child(4) > div > div._199894c6 > div._16c8fd5e._1f1541e1');
+                selectors.insertCardBeforeThisElement       = document.querySelector('main');
                 break;
             default:
                 throw 'No selectors for ' + site;
         }
 
         /*Test if all the selectors returned a DOM element*/
-        for (var selector in selectors) {
+        for (let selector in selectors) {
             if (!selectors[selector]) throw selector + ' did not return a DOM element';
         }
 
         return selectors;
     };
 
-    var getRestaurantInfo = function(selectors, site){
-        var restaurantInfo = {};
+    function getRestaurantInfo(selectors, site) {
+        const restaurantInfo = {};
 
         /*
          Split Address Info:
@@ -86,9 +84,9 @@
          111 Wycoff Ave
          <br>
          Brooklyn, NY 11237 */
-        var address = (site === 'opentable' || site === 'yelp')? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
+        const address = ['opentable', 'yelp'].includes(site)? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
 
-        var firstSpace = address.indexOf(' ');
+        const firstSpace = address.indexOf(' ');
         if (firstSpace === -1) throw 'No spaces in address';
 
         restaurantInfo.buildingNumber = address.substr(0, firstSpace);
@@ -98,11 +96,11 @@
             .replace(/ *\([^)]*\) */g, "")
             .trim();
 
-        var lastSpace = restaurantInfo.street.lastIndexOf(' ');
+        const lastSpace = restaurantInfo.street.lastIndexOf(' ');
         if (lastSpace !== -1) restaurantInfo.street = restaurantInfo.street.substring(0,lastSpace);
 
         /*If the street contains a digit, remove all non-digits (e.g. 3rd ave becomes 3)*/
-        var containsDigit = /\d/;
+        const containsDigit = /\d/;
         if (containsDigit.test(restaurantInfo.street)){
             restaurantInfo.street = restaurantInfo.street
                 .replace(/[^0-9]/g, "")
@@ -124,14 +122,14 @@
             .replace(/#/g, '');             //Remove hashtags
 
         /*Remove everything after a dash (opentable)*/
-        var dash = restaurantInfo.name.indexOf('-');
+        const dash = restaurantInfo.name.indexOf('-');
         if (dash !== -1) restaurantInfo.name = restaurantInfo.name.substring(0, dash);
 
 
         /*Again, because Opentable stores the entire address in one div, separated by a <br>, another exception is needed.
          The lastChild returns string with the city, state and zip. Regex removes everything that isn't a number (yielding only the zipcode)*/
-        if (selectors.zipcodeSelector){ /*Some sites don't provide a zipcode (grubhub)*/
-            restaurantInfo.zipcode = (site === 'opentable' || site === 'yelp')? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
+        if (selectors.zipcodeSelector) { /*Some sites don't provide a zipcode (grubhub)*/
+            restaurantInfo.zipcode = ['opentable', 'yelp', 'menupages'].includes(site)? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
         }
 
         /*remove everything that isn't a number*/
@@ -139,27 +137,27 @@
             .replace(/[^0-9]/g, "")
             .trim();
 
-        for (var prop in restaurantInfo) {
+        for (let prop in restaurantInfo) {
             if (!restaurantInfo[prop]) throw 'Selector for ' + prop + ' field did not yield any value';
         }
 
         return restaurantInfo;
     };
 
-    var createInspectionCardDiv = function(insertCardBeforeThisElement){
-        var inspectionCardDiv = document.createElement('div');
+    function createInspectionCardDiv(insertCardBeforeThisElement) {
+        const inspectionCardDiv = document.createElement('div');
 
         insertCardBeforeThisElement.parentNode.insertBefore(inspectionCardDiv, insertCardBeforeThisElement);
 
         return inspectionCardDiv;
     };
 
-    var displayLoadingAnimation = function(inspectionCardDiv, site){
+    function displayLoadingAnimation(inspectionCardDiv, site) {
 
         inspectionCardDiv.setAttribute('class', 'inspectionSpinner ' + site);
 
-        var cube1 = document.createElement('div'),
-            cube2 = document.createElement('div');
+        const cube1 = document.createElement('div');
+        const cube2 = document.createElement('div');
 
         cube1.setAttribute('class', 'cube1');
         cube2.setAttribute('class', 'cube2');
@@ -169,20 +167,20 @@
 
     };
 
-    var displayResult = function(mostRecentInspection, inspectionCardDiv, site){
+    function displayResult(mostRecentInspection, inspectionCardDiv, site) {
         /*
          Check for grade or action:
          - If grade exists, display corresponding image
          - If action exists and it indicates closure, display closed image
          */
 
-        var gradeClassToApply = '';
+        let gradeClassToApply = '';
 
-        if (!mostRecentInspection){
+        if (!mostRecentInspection) {
             gradeClassToApply = "noResultsFound";
         }
-        else if (mostRecentInspection.grade){
-            switch(mostRecentInspection.grade){
+        else if (mostRecentInspection.grade) {
+            switch(mostRecentInspection.grade) {
                 case 'A':
                     gradeClassToApply = "gradeA";
                     break;
@@ -203,19 +201,19 @@
             }
         }
         else{
-            if (!mostRecentInspection.action){
+            if (!mostRecentInspection.action) {
                 gradeClassToApply = "notYetGraded";
             }
-            else if (mostRecentInspection.action.substring(0,20) === 'Establishment Closed'){
+            else if (mostRecentInspection.action.substring(0,20) === 'Establishment Closed') {
                 gradeClassToApply = "gradeClosed";
             }
-            else{
+            else {
                 throw 'No Matching Action';
             }
         }
 
         /*remove loading animation cubes*/
-        while( inspectionCardDiv.hasChildNodes() ){
+        while(inspectionCardDiv.hasChildNodes()) {
             inspectionCardDiv.removeChild(inspectionCardDiv.lastChild);
         }
         /*apply id & classes*/
@@ -223,14 +221,14 @@
         inspectionCardDiv.setAttribute("class", gradeClassToApply + ' ' + site);
 
         /*If a grade or action exists, show inspection date*/
-        if (mostRecentInspection && (mostRecentInspection.grade || mostRecentInspection.action)){
-            var inspectionDate = new Date(mostRecentInspection.inspection_date);
+        if (mostRecentInspection && (mostRecentInspection.grade || mostRecentInspection.action)) {
+            const inspectionDate = new Date(mostRecentInspection.inspection_date);
 
-            var	inspectionDateElement = document.createElement('span');
+            const inspectionDateElement = document.createElement('span');
             inspectionDateElement.setAttribute("id", "inspectionDate");
             inspectionDateElement.setAttribute("title", "Inspection Date");
 
-            var inspectionDateText = document.createTextNode((inspectionDate.getMonth()+1) + '/' + inspectionDate.getUTCDate() + '/' + inspectionDate.getFullYear());
+            const inspectionDateText = document.createTextNode((inspectionDate.getMonth()+1) + '/' + inspectionDate.getUTCDate() + '/' + inspectionDate.getFullYear());
             inspectionDateElement.appendChild(inspectionDateText);
 
             inspectionCardDiv.appendChild(inspectionDateElement);
@@ -238,7 +236,7 @@
 
     };
 
-    var verifyMatch = function(mostRecentInspection, restaurantInfo){
+    function verifyMatch(mostRecentInspection, restaurantInfo) {
         if (!mostRecentInspection) return;
 
         /*
@@ -250,24 +248,24 @@
         return true;
     };
 
-    var get = function(params) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
+    function get(params) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
             xhr.addEventListener("error", reject);
             xhr.addEventListener("load", resolve);
-            xhr.open("GET", "https://data.cityofnewyork.us/resource/xx67-kt59.json?" + params, true);
+            xhr.open("GET", "https://data.cityofnewyork.us/resource/9w7m-hzhe.json?" + params, true);
             xhr.send(null);
         });
     };
 
-    var convertObjectToParamString = function(queryParamsObj){
-        return Object.keys(queryParamsObj).map(function(key) {
+    function convertObjectToParamString(queryParamsObj) {
+        return Object.keys(queryParamsObj).map(key => {
             return key + '=' + queryParamsObj[key];
         }).join('&');
     };
 
-    var buildWhereQuery = function(restaurantInfo, gradeNotNull){
-        var queryParamsObj = {};
+    function buildWhereQuery(restaurantInfo, gradeNotNull) {
+        const queryParamsObj = {};
         queryParamsObj.$where = "phone='" 	+ restaurantInfo.phone
         + "' OR ( dba='" + restaurantInfo.name
         + "' AND zipcode='" + restaurantInfo.zipcode
@@ -280,8 +278,8 @@
         return convertObjectToParamString(queryParamsObj);
     };
 
-    var buildFullTextQuery = function(restaurantInfo, gradeNotNull){
-        var queryParamsObj = {};
+    function buildFullTextQuery(restaurantInfo, gradeNotNull) {
+        const queryParamsObj = {};
         queryParamsObj.$q = restaurantInfo.name + ' ' + restaurantInfo.buildingNumber + ' ' + restaurantInfo.street;
         queryParamsObj.$order = "inspection_date DESC";
         queryParamsObj.$limit = "1";
@@ -291,42 +289,42 @@
         return convertObjectToParamString(queryParamsObj);
     };
 
-    var validateInspectionData = function(inspection){
+    function validateInspectionData(inspection) {
         return (inspection && ((inspection.grade) || (!inspection.action) || (inspection.action.substring(0,20) === 'Establishment Closed')));
     };
 
-    var runSearch = function(params){
+    function runSearch(params) {
         return get(params)
-            .then(function(promise){
-                var mostRecentInspectionArray = JSON.parse(promise.target.response);
+            .then(promise => {
+                const mostRecentInspectionArray = JSON.parse(promise.target.response);
                 return mostRecentInspectionArray[0];
             });
     };
 
-    var runWhereClauseSearch = function(restaurantInfo, gradeNotNull){
-        if (!restaurantInfo.zipcode){
-            return new Promise(function(resolve){
+    function runWhereClauseSearch(restaurantInfo, gradeNotNull) {
+        if (!restaurantInfo.zipcode) {
+            return new Promise(resolve => {
                 resolve(null);
             });
         }
 
-        var whereQueryParams = buildWhereQuery(restaurantInfo, gradeNotNull);
+        const whereQueryParams = buildWhereQuery(restaurantInfo, gradeNotNull);
 
         return runSearch(whereQueryParams);
     };
 
-    var runFullTextSearch = function(restaurantInfo, gradeNotNull){
-        var fullTextQueryParams = buildFullTextQuery(restaurantInfo, gradeNotNull);
+    function runFullTextSearch(restaurantInfo, gradeNotNull) {
+        const fullTextQueryParams = buildFullTextQuery(restaurantInfo, gradeNotNull);
         return runSearch(fullTextQueryParams);
     };
 
-    var reportError = function(errorObj){
+    function reportError(errorObj) {
         console.error('NYC Restaurant Health Inspection Letter Grades: ' + errorObj.message);
     };
 
-    var main = function(){
+    function main() {
 
-        var site, selectors, restaurantInfo;
+        let site, selectors, restaurantInfo;
 
         try{
             site            = determineSite();
@@ -337,6 +335,7 @@
             reportError(new Error(error));
             return;
         }
+
 
         selectors.inspectionCardDiv = createInspectionCardDiv(selectors.insertCardBeforeThisElement, site);
 
@@ -356,46 +355,40 @@
          displaying the grade.
          */
         runWhereClauseSearch(restaurantInfo, false)
-            .then(function(mostRecentInspection){
+            .then(mostRecentInspection => {
                 if (!mostRecentInspection) return;
 
-                if (!validateInspectionData(mostRecentInspection)){
+                if (!validateInspectionData(mostRecentInspection)) {
                     return runWhereClauseSearch(restaurantInfo, true)
-                        .then(function(mostRecentInspection){
-                            return (validateInspectionData(mostRecentInspection) && verifyMatch(mostRecentInspection, restaurantInfo))? mostRecentInspection : null;
-                        });
+                        .then(mostRecentInspection => (validateInspectionData(mostRecentInspection) && verifyMatch(mostRecentInspection, restaurantInfo))? mostRecentInspection : null);
                 }
 
                 return verifyMatch(mostRecentInspection, restaurantInfo)? mostRecentInspection : null;
             })
-            .then(function(mostRecentInspection){
+            .then(mostRecentInspection => {
                 if (mostRecentInspection) return mostRecentInspection;
 
                 return runFullTextSearch(restaurantInfo, false)
-                    .then(function(mostRecentInspection){
+                    .then(mostRecentInspection => {
                         if (!mostRecentInspection) return;
 
-                        if (!validateInspectionData(mostRecentInspection)){
+                        if (!validateInspectionData(mostRecentInspection)) {
                             return runFullTextSearch(restaurantInfo, true)
-                                .then(function(mostRecentInspection){
-                                    return (validateInspectionData(mostRecentInspection) && verifyMatch(mostRecentInspection, restaurantInfo))? mostRecentInspection : null;
-                                });
+                                .then(mostRecentInspection => (validateInspectionData(mostRecentInspection) && verifyMatch(mostRecentInspection, restaurantInfo))? mostRecentInspection : null);
                         }
 
                         return verifyMatch(mostRecentInspection, restaurantInfo)? mostRecentInspection : null;
                     });
 
             })
-            .then(function(mostRecentInspection){
+            .then(mostRecentInspection => {
                 displayResult(mostRecentInspection, selectors.inspectionCardDiv, site);
             })
-            .catch(function(error){
+            .catch(error => {
                 reportError(error);
-            })
-            .done();
+            });
 
     };
 
     main();
-
-})();
+}
