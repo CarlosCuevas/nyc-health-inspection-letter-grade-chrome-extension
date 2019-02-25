@@ -1,3 +1,5 @@
+// import WAE from 'web-auto-extractor'
+
 {
     'use strict';
 
@@ -59,89 +61,153 @@
         }
 
         /*Test if all the selectors returned a DOM element*/
-        for (let selector in selectors) {
-            if (!selectors[selector]) throw selector + ' did not return a DOM element';
-        }
+        // for (let selector in selectors) {
+        //     if (!selectors[selector]) throw selector + ' did not return a DOM element';
+        // }
 
         return selectors;
     };
 
+    function scrapeJsonLd() {
+        document.querySelectorAll('script[type="application/ld+json"]').forEach((item, index) => {
+            console.log(item);
+            try {
+              let parsedJSON = JSON.parse(item.text)
+              if (!Array.isArray(parsedJSON)) {
+                parsedJSON = [parsedJSON]
+              }
+              parsedJSON.forEach(obj => {
+                const type = obj['@type']
+                jsonldData[type] = jsonldData[type] || []
+                jsonldData[type].push(obj)
+              })
+            } catch (e) {
+              console.log(`Error in jsonld parse - ${e}`)
+            }
+          });
+        return parsedJSON;
+    }
+
     function getRestaurantInfo(selectors, site) {
-        const restaurantInfo = {};
+        if (site === 'yelp') {
+            console.log('yelp');
+            //const scrapedData = WAE().parse(document.documentElement.innerHTML);
+            const scrapedData = scrapeJsonLd();
+            const restaurantScrapedData = scrapedData.jsonld.Restaurant[0];
+            const restaurantInfo = {};
+            console.log(restaurantScrapedData);
+            const address = restaurantScrapedData.address.streetAddress;
+            const firstSpace = address.indexOf(' ');
+            if (firstSpace === -1) throw 'No spaces in address';
 
-        /*
-         Split Address Info:
-         Everything before the first space is assumed to be the building number.
-         Everything between the first space and the last space is assumed to be the street name.
-         e.g.
-         address = 111 Wycoff Ave
-         building = 111
-         street = wycoff
-         */
+            restaurantInfo.buildingNumber = address.substr(0, firstSpace);
+            restaurantInfo.street = address
+                .substr(firstSpace, address.length)
+                .replace(/ *\([^)]*\) */g, "")
+                .trim();
 
-        /*Opentable and Yelp has the entire address (i.e. building, street, city, state, and zip code) in one div, with a <br> between the street and city
-         e.g.
-         111 Wycoff Ave
-         <br>
-         Brooklyn, NY 11237 */
-        const address = ['opentable', 'yelp'].includes(site)? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
+            const lastSpace = restaurantInfo.street.lastIndexOf(' ');
+            if (lastSpace !== -1) restaurantInfo.street = restaurantInfo.street.substring(0,lastSpace);
 
-        const firstSpace = address.indexOf(' ');
-        if (firstSpace === -1) throw 'No spaces in address';
+            /*If the street contains a digit, remove all non-digits (e.g. 3rd ave becomes 3)*/
+            const containsDigit = /\d/;
+            if (containsDigit.test(restaurantInfo.street)){
+                restaurantInfo.street = restaurantInfo.street
+                    .replace(/[^0-9]/g, "")
+                    .trim();
+            }
 
-        restaurantInfo.buildingNumber = address.substr(0, firstSpace);
+            restaurantInfo.name = restaurantScrapedData.name.trim()
+                .toLowerCase()
+                .replace(/'/g, "’")             //Replace single quotes...
+                .replace(/ *\([^)]*\) */g, "")  //Replace any text within parentheses...
+                .replace(/&/g, "")              //Remove ampersands
+                .replace(/#/g, '');
+            restaurantInfo.zipcode = restaurantScrapedData.address.postalCode;
+            /*remove everything that isn't a number*/
+            restaurantInfo.phone = restaurantScrapedData.telephone
+                .replace(/[^0-9]/g, "")
+                .trim()
+                .slice(1);
+            console.log(restaurantInfo);
+            return restaurantInfo;
+        } else {
+            const restaurantInfo = {};
 
-        restaurantInfo.street = address
-            .substr(firstSpace, address.length)
-            .replace(/ *\([^)]*\) */g, "")
-            .trim();
+            /*
+             Split Address Info:
+             Everything before the first space is assumed to be the building number.
+             Everything between the first space and the last space is assumed to be the street name.
+             e.g.
+             address = 111 Wycoff Ave
+             building = 111
+             street = wycoff
+             */
 
-        const lastSpace = restaurantInfo.street.lastIndexOf(' ');
-        if (lastSpace !== -1) restaurantInfo.street = restaurantInfo.street.substring(0,lastSpace);
+            /*Opentable and Yelp has the entire address (i.e. building, street, city, state, and zip code) in one div, with a <br> between the street and city
+             e.g.
+             111 Wycoff Ave
+             <br>
+             Brooklyn, NY 11237 */
+            const address = ['opentable', 'yelp'].includes(site)? selectors.addressSelector.firstChild.wholeText.trim() : selectors.addressSelector.innerText.trim();
 
-        /*If the street contains a digit, remove all non-digits (e.g. 3rd ave becomes 3)*/
-        const containsDigit = /\d/;
-        if (containsDigit.test(restaurantInfo.street)){
-            restaurantInfo.street = restaurantInfo.street
+            const firstSpace = address.indexOf(' ');
+            if (firstSpace === -1) throw 'No spaces in address';
+
+            restaurantInfo.buildingNumber = address.substr(0, firstSpace);
+
+            restaurantInfo.street = address
+                .substr(firstSpace, address.length)
+                .replace(/ *\([^)]*\) */g, "")
+                .trim();
+
+            const lastSpace = restaurantInfo.street.lastIndexOf(' ');
+            if (lastSpace !== -1) restaurantInfo.street = restaurantInfo.street.substring(0,lastSpace);
+
+            /*If the street contains a digit, remove all non-digits (e.g. 3rd ave becomes 3)*/
+            const containsDigit = /\d/;
+            if (containsDigit.test(restaurantInfo.street)){
+                restaurantInfo.street = restaurantInfo.street
+                    .replace(/[^0-9]/g, "")
+                    .trim();
+            }
+
+            /*
+             Replace single quotes with right single quotes in the name (as single quotes are used to demarcate the end of the search value in the query)
+             Remove any text within parentheses, as well as the parenthesis themselves (seamless)
+             Remove any ampersands
+             Remove any hashtags
+             */
+            restaurantInfo.name = selectors.nameSelector.innerText
+                .trim()
+                .toLowerCase()
+                .replace(/'/g, "’")             //Replace single quotes...
+                .replace(/ *\([^)]*\) */g, "")  //Replace any text within parentheses...
+                .replace(/&/g, "")              //Remove ampersands
+                .replace(/#/g, '');             //Remove hashtags
+
+            /*Remove everything after a dash (opentable)*/
+            const dash = restaurantInfo.name.indexOf('-');
+            if (dash !== -1) restaurantInfo.name = restaurantInfo.name.substring(0, dash);
+
+
+            /*Again, because Opentable stores the entire address in one div, separated by a <br>, another exception is needed.
+             The lastChild returns string with the city, state and zip. Regex removes everything that isn't a number (yielding only the zipcode)*/
+            if (selectors.zipcodeSelector) { /*Some sites don't provide a zipcode (grubhub)*/
+                restaurantInfo.zipcode = ['opentable', 'yelp', 'menupages'].includes(site)? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
+            }
+
+            /*remove everything that isn't a number*/
+            restaurantInfo.phone = selectors.phoneNumberSelector.innerText
                 .replace(/[^0-9]/g, "")
                 .trim();
+
+            for (let prop in restaurantInfo) {
+                if (!restaurantInfo[prop]) throw 'Selector for ' + prop + ' field did not yield any value';
+            }
+
+            return restaurantInfo;
         }
-
-        /*
-         Replace single quotes with right single quotes in the name (as single quotes are used to demarcate the end of the search value in the query)
-         Remove any text within parentheses, as well as the parenthesis themselves (seamless)
-         Remove any ampersands
-         Remove any hashtags
-         */
-        restaurantInfo.name = selectors.nameSelector.innerText
-            .trim()
-            .toLowerCase()
-            .replace(/'/g, "’")             //Replace single quotes...
-            .replace(/ *\([^)]*\) */g, "")  //Replace any text within parentheses...
-            .replace(/&/g, "")              //Remove ampersands
-            .replace(/#/g, '');             //Remove hashtags
-
-        /*Remove everything after a dash (opentable)*/
-        const dash = restaurantInfo.name.indexOf('-');
-        if (dash !== -1) restaurantInfo.name = restaurantInfo.name.substring(0, dash);
-
-
-        /*Again, because Opentable stores the entire address in one div, separated by a <br>, another exception is needed.
-         The lastChild returns string with the city, state and zip. Regex removes everything that isn't a number (yielding only the zipcode)*/
-        if (selectors.zipcodeSelector) { /*Some sites don't provide a zipcode (grubhub)*/
-            restaurantInfo.zipcode = ['opentable', 'yelp', 'menupages'].includes(site)? selectors.zipcodeSelector.lastChild.wholeText.replace(/[^0-9]/g, "").trim() : selectors.zipcodeSelector.innerText.trim();
-        }
-
-        /*remove everything that isn't a number*/
-        restaurantInfo.phone = selectors.phoneNumberSelector.innerText
-            .replace(/[^0-9]/g, "")
-            .trim();
-
-        for (let prop in restaurantInfo) {
-            if (!restaurantInfo[prop]) throw 'Selector for ' + prop + ' field did not yield any value';
-        }
-
-        return restaurantInfo;
     };
 
     function createInspectionCardDiv(insertCardBeforeThisElement) {
