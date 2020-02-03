@@ -45,9 +45,10 @@
 }
 
 /*Sites*/
-.yelp{
-        right: 45px;
-        float: right;
+.yelp {
+        position: absolute;
+        top: 0;
+        right: 0;
 }
 
 .zagat{
