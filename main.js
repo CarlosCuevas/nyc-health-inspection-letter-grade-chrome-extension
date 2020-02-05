@@ -25,7 +25,9 @@ function determineSite() {
         'yelp',
         'menupages',
         'opentable',
-        'grubhub'
+        'grubhub',
+        'seamless',
+        'ubereats'
     ];
     const url = document.URL.toLowerCase();
     let site = null;
@@ -47,16 +49,22 @@ function cacheSelectors(site) {
 
     switch(site) {
         case 'yelp':
-            selectors.insertCardBeforeThisElement = document.querySelector('div.main-content-wrap.main-content-wrap--full').firstElementChild;
+            selectors.insertCardBeforeThisElement = document.querySelector('#wrap > div.main-content-wrap.main-content-wrap--full > div > div.lemon--div__373c0__1mboc.spinner-container__373c0__N6Hff.border-color--default__373c0__YEvMS > div.lemon--div__373c0__1mboc.u-space-t3.u-space-b6.border-color--default__373c0__2oFDT > div > div > div.lemon--div__373c0__1mboc.stickySidebar--heightContext__373c0__133M8.tableLayoutFixed__373c0__12cEm.arrange__373c0__UHqhV.u-space-b6.u-padding-b4.border--bottom__373c0__uPbXS.border-color--default__373c0__2oFDT > div.lemon--div__373c0__1mboc.stickySidebar--fullHeight__373c0__1szWY.arrange-unit__373c0__1piwO.arrange-unit-grid-column--4__373c0__3oeu6.border-color--default__373c0__2oFDT > div').firstElementChild;
         break;
         case 'menupages':
             selectors.insertCardBeforeThisElement = document.querySelector('#cart');
         break;
         case 'opentable':
-            selectors.insertCardBeforeThisElement = document.querySelector('main');
+            selectors.insertCardBeforeThisElement = document.querySelector('#js-page > div._54265dcc.d210ec04 > aside > div.bfdedf6a > div:nth-child(2) > div > div._8ecd35dd');
         break;
         case 'grubhub':
-            selectors.insertCardBeforeThisElement = document.querySelector('#ghs-menu-page-nav');
+            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner');
+        break;
+        case 'seamless':
+            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner').firstElementChild;
+        break;
+        case 'ubereats':
+            selectors.insertCardBeforeThisElement = document.querySelector('#wrapper > div:nth-child(4)');
         break;
         default:
             throw 'No selectors for ' + site;
@@ -124,7 +132,6 @@ function getRestaurantInfo(selectors, site) {
         .trim()
     // ignore country code
     if (restaurantInfo.phone[0] === '1') restaurantInfo.phone = restaurantInfo.phone.slice(1);
-    console.log(restaurantInfo);
     return restaurantInfo;
 
     /*remove everything that isn't a number*/
@@ -142,7 +149,7 @@ function getRestaurantInfo(selectors, site) {
 function createInspectionCardDiv(insertCardBeforeThisElement) {
     const inspectionCardDiv = document.createElement('div');
 
-    return insertCardBeforeThisElement.insertBefore(inspectionCardDiv, insertCardBeforeThisElement.firstElementChild);
+    return insertCardBeforeThisElement.parentNode.insertBefore(inspectionCardDiv, insertCardBeforeThisElement);
 };
 
 function displayLoadingAnimation(inspectionCardDiv, site) {
@@ -169,24 +176,24 @@ function displayResult(mostRecentInspection, inspectionCardDiv, site) {
      let gradeClassToApply = '';
 
     if (!mostRecentInspection) {
-        gradeClassToApply = "noResultsFound";
+        gradeClassToApply = 'noResultsFound';
     }
     else if (mostRecentInspection.grade) {
         switch(mostRecentInspection.grade) {
             case 'A':
-            gradeClassToApply = "gradeA";
+            gradeClassToApply = 'gradeA';
             break;
             case 'B':
-            gradeClassToApply = "gradeB";
+            gradeClassToApply = 'gradeB';
             break;
             case 'C':
-            gradeClassToApply = "gradeC";
+            gradeClassToApply = 'gradeC';
             break;
             case 'Z':
-            gradeClassToApply = "gradePending";
+            gradeClassToApply = 'gradePending';
             break;
             case 'Not Yet Graded':
-            gradeClassToApply = "notYetGraded";
+            gradeClassToApply = 'notYetGraded';
             break;
             default:
             throw 'No Matching Grade';
@@ -194,10 +201,10 @@ function displayResult(mostRecentInspection, inspectionCardDiv, site) {
     }
     else {
         if (!mostRecentInspection.action) {
-            gradeClassToApply = "notYetGraded";
+            gradeClassToApply = 'notYetGraded';
         }
         else if (mostRecentInspection.action.substring(0,20) === 'Establishment Closed') {
-            gradeClassToApply = "gradeClosed";
+            gradeClassToApply = 'gradeClosed';
         }
         else {
             throw 'No Matching Action';
@@ -209,16 +216,16 @@ function displayResult(mostRecentInspection, inspectionCardDiv, site) {
         inspectionCardDiv.removeChild(inspectionCardDiv.lastChild);
     }
     /*apply id & classes*/
-    inspectionCardDiv.setAttribute("id", "inspectionCard");
-    inspectionCardDiv.setAttribute("class", gradeClassToApply + ' ' + site);
+    inspectionCardDiv.setAttribute('id', 'nyc-health-inspection-card');
+    inspectionCardDiv.setAttribute('class', gradeClassToApply + ' ' + site);
 
     /*If a grade or action exists, show inspection date*/
     if (mostRecentInspection && (mostRecentInspection.grade || mostRecentInspection.action)) {
         const inspectionDate = new Date(mostRecentInspection.inspection_date);
 
         const inspectionDateElement = document.createElement('span');
-        inspectionDateElement.setAttribute("id", "inspectionDate");
-        inspectionDateElement.setAttribute("title", "Inspection Date");
+        inspectionDateElement.setAttribute('id', 'inspectionDate');
+        inspectionDateElement.setAttribute('title', 'Inspection Date');
 
         const inspectionDateText = document.createTextNode((inspectionDate.getMonth()+1) + '/' + inspectionDate.getUTCDate() + '/' + inspectionDate.getFullYear());
         inspectionDateElement.appendChild(inspectionDateText);
@@ -243,9 +250,9 @@ function verifyMatch(mostRecentInspection, restaurantInfo) {
  function get(params) {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.addEventListener("error", reject);
-        xhr.addEventListener("load", resolve);
-        xhr.open("GET", "https://data.cityofnewyork.us/resource/9w7m-hzhe.json?" + params, true);
+        xhr.addEventListener('error', reject);
+        xhr.addEventListener('load', resolve);
+        xhr.open('GET', 'https://data.cityofnewyork.us/resource/9w7m-hzhe.json?' + params, true);
         xhr.send(null);
     });
 };
@@ -259,11 +266,11 @@ function convertObjectToParamString(queryParamsObj) {
 function buildWhereQuery(restaurantInfo, gradeNotNull) {
     const queryParamsObj = {};
     queryParamsObj.$where = "phone='" 	+ restaurantInfo.phone
-    + "' OR ( dba='" + restaurantInfo.name
+    + "' OR ( UPPER(dba)='" + restaurantInfo.name.toUpperCase()
     + "' AND zipcode='" + restaurantInfo.zipcode
     + "' )";
-    queryParamsObj.$order = "inspection_date DESC";
-    queryParamsObj.$limit = "1";
+    queryParamsObj.$order = 'inspection_date DESC';
+    queryParamsObj.$limit = '1';
 
     if (gradeNotNull) queryParamsObj.$where += ' AND grade IS NOT NULL';
 
@@ -273,8 +280,8 @@ function buildWhereQuery(restaurantInfo, gradeNotNull) {
 function buildFullTextQuery(restaurantInfo, gradeNotNull) {
     const queryParamsObj = {};
     queryParamsObj.$q = restaurantInfo.name + ' ' + restaurantInfo.buildingNumber + ' ' + restaurantInfo.street;
-    queryParamsObj.$order = "inspection_date DESC";
-    queryParamsObj.$limit = "1";
+    queryParamsObj.$order = 'inspection_date DESC';
+    queryParamsObj.$limit = '1';
 
     if (gradeNotNull) queryParamsObj.$where = 'grade IS NOT NULL';
 
@@ -310,12 +317,14 @@ function runFullTextSearch(restaurantInfo, gradeNotNull) {
     return runSearch(fullTextQueryParams);
 };
 
-function main() {
-
+async function main() {
     let site, selectors, restaurantInfo;
 
     try {
         site            = determineSite();
+        if (['grubhub', 'seamless', 'ubereats'].includes(site)) {
+            await new Promise(r => setTimeout(r, 4000));
+        }
         selectors       = cacheSelectors(site);
         restaurantInfo  = getRestaurantInfo(selectors, site);
     } catch (error) {
@@ -380,10 +389,17 @@ main();
 let previousPath = window.location.pathname.split('/');
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    let existingCard;
     console.assert(request.action === 'url_change');
     sendResponse({message: 'ACK'});
+    // ubereats hack
+    if (existingCard = document.querySelector('#nyc-health-inspection-card')) {
+        existingCard.remove();
+    }
     let currentPath = window.location.pathname.split('/');
-    // grubhub
-    if (currentPath[1] !== 'restaurant') return;
-    if (previousPath[2] !== currentPath[2]) setTimeout(main, 5000);
+    // !['restaurant', 'menu'].includes(currentPath[1]) || ('food-delivery' !== currentPath[3]) || 
+    if (['view'].includes(currentPath[2])) return;
+    if (previousPath[2] !== currentPath[2] || previousPath[4] !== currentPath[4]) {
+        main();
+    }
 });

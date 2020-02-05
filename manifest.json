@@ -22,7 +22,9 @@
           "*://*.yelp.com/biz/*",
           "*://*.menupages.com/*",
           "*://*.opentable.com/*",
-          "*://*.grubhub.com/*"
+          "*://*.grubhub.com/*",
+          "*://*.seamless.com/*",
+          "*://*.ubereats.com/*"
         ],
         "css": ["inspectionStyles.css"],
         "js": ["main.js"],
