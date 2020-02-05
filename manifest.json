@@ -3,7 +3,7 @@
 
   "name": "NYC Restaurant Health Inspection Letter Grade",
   "description": "Displays the health inspection letter grade for restaurants in New York City on Yelp, Menupages, Opentable and Foursquare",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "homepage_url": "https://github.com/CarlosCuevas",
   "icons": {
     "16": "icons/icon16.png",
