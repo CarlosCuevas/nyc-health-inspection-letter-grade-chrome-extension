@@ -1,4 +1,4 @@
-        #inspectionCard{
+#nyc-health-inspection-card {
         height: 125px;
         width: 100px;
         text-align: center;
@@ -7,7 +7,7 @@
         box-shadow: 2px 2px 2px #cccccc;
 }
 
-#inspectionDate{
+#inspectionDate {
         font-size: 14px;
         font-family: Arial, sans-serif;
         position: absolute;
@@ -16,52 +16,47 @@
 }
 
 /*Grades*/
-.gradeA{
+.gradeA {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/a.png');
 }
 
-.gradeB{
+.gradeB {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/b.png');
 }
 
-.gradeC{
+.gradeC {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/c.png');
 }
 
-.gradePending{
+.gradePending {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/pending.png');
 }
 
-.gradeClosed{
+.gradeClosed {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/closed.png');
 }
 
-.noResultsFound{
+.noResultsFound {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/noResultsFound.png');
 }
 
-.notYetGraded{
+.notYetGraded {
         background-image: url('chrome-extension://__MSG_@@extension_id__/images/notYetGraded.png');
 }
 
 /*Sites*/
-.yelp{
-        right: 45px;
-        float: right;
+.yelp, .ubereats, .opentable {
+        margin: 10px auto;
 }
 
-.zagat{
-        margin: 25px;
-}
-
-.opentable{
-        left: 15px;
-        top: 15px;
-}
-
-.foursquare {
+.grubhub, .seamless {
         margin: 0 auto;
 }
+
+.seamless {
+        margin: 0 auto;
+}
+
 
 /*Spinner*/
 
