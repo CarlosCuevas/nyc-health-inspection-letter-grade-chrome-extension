@@ -1,25 +1,5 @@
 'use strict';
-/*
-function schemaOrgParser() {
-    const result = {};
-    const element = document.querySelector('[itemscope][itemtype="http://schema.org/Restaurant"]');
-    const props = element.querySelectorAll('[itemprop]');
-    props.forEach(prop => {
-        result[prop.getAttribute('itemprop')] = prop.content || prop.textContent || prop.src;
-        if (prop.matches('[itemscope]') && prop.matches('[itemprop]')) {
-            const _item = {
-                'type': [prop.getAttribute('itemtype')],
-                'properties': {}
-            };
-            prop.querySelectorAll('[itemprop]').forEach(_prop => {
-                _item.properties[_prop.getAttribute('itemprop')] = _prop.content || _prop.textContent || _prop.src;
-            });
-            result[prop.getAttribute('itemprop')] = _item;
-        }
-    });
-    return result;
-}
-*/
+
 function determineSite() {
     const supportedSites = [
         'yelp',
@@ -27,7 +7,8 @@ function determineSite() {
         'opentable',
         'grubhub',
         'seamless',
-        'ubereats'
+        'ubereats',
+        'slicelife',
     ];
     const url = document.URL.toLowerCase();
     let site = null;
@@ -49,29 +30,36 @@ function cacheSelectors(site) {
 
     switch(site) {
         case 'yelp':
-            selectors.insertCardBeforeThisElement = document.querySelector('#wrap > div.main-content-wrap.main-content-wrap--full > div > div.lemon--div__373c0__1mboc.spinner-container__373c0__N6Hff.border-color--default__373c0__YEvMS > div.lemon--div__373c0__1mboc.u-space-t3.u-space-b6.border-color--default__373c0__2oFDT > div > div > div.lemon--div__373c0__1mboc.stickySidebar--heightContext__373c0__133M8.tableLayoutFixed__373c0__12cEm.arrange__373c0__UHqhV.u-space-b6.u-padding-b4.border--bottom__373c0__uPbXS.border-color--default__373c0__2oFDT > div.lemon--div__373c0__1mboc.stickySidebar--fullHeight__373c0__1szWY.arrange-unit__373c0__1piwO.arrange-unit-grid-column--4__373c0__3oeu6.border-color--default__373c0__2oFDT > div').firstElementChild;
-        break;
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="wrap"]/div[2]/yelp-react-root/div/div[3]/div/div/div[2]/div/div[2]/div/div/section[1]');
+            break;
         case 'menupages':
             selectors.insertCardBeforeThisElement = document.querySelector('#cart');
-        break;
+            break;
         case 'opentable':
-            selectors.insertCardBeforeThisElement = document.querySelector('#js-page > div._54265dcc.d210ec04 > aside > div.bfdedf6a > div:nth-child(2) > div > div._8ecd35dd');
-        break;
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="js-page"]/div[2]/aside/div/div[2]/div/div[2]');
+            break;
         case 'grubhub':
             selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner');
-        break;
+            break;
         case 'seamless':
-            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner').firstElementChild;
-        break;
+            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner');
+            break;
+        case 'slicelife':
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="app"]/div/div/div[4]/div[1]/div[3]');
+            break;
         case 'ubereats':
-            selectors.insertCardBeforeThisElement = document.querySelector('#wrapper > div:nth-child(4)');
-        break;
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="main-content"]/div[4]/div/div[2]');
+            break;
         default:
             throw 'No selectors for ' + site;
     }
 
     return selectors;
 };
+
+function getElementByXpath(path) {
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
 
 function scrapeJsonLd() {
     let jsonldData = {};
@@ -322,7 +310,7 @@ async function main() {
 
     try {
         site            = determineSite();
-        if (['grubhub', 'seamless', 'ubereats'].includes(site)) {
+        if (['grubhub', 'seamless', 'yelp', 'slicelife', 'ubereats' ].includes(site)) {
             await new Promise(r => setTimeout(r, 4000));
         }
         selectors       = cacheSelectors(site);
@@ -397,7 +385,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         existingCard.remove();
     }
     let currentPath = window.location.pathname.split('/');
-    // !['restaurant', 'menu'].includes(currentPath[1]) || ('food-delivery' !== currentPath[3]) || 
     if (['view'].includes(currentPath[2])) return;
     if (previousPath[2] !== currentPath[2] || previousPath[4] !== currentPath[4]) {
         main();

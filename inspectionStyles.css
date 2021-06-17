@@ -45,18 +45,13 @@
 }
 
 /*Sites*/
-.yelp, .ubereats, .opentable {
+.yelp, .slicelife, .opentable {
         margin: 10px auto;
 }
 
 .grubhub, .seamless {
         margin: 0 auto;
 }
-
-.seamless {
-        margin: 0 auto;
-}
-
 
 /*Spinner*/
 
