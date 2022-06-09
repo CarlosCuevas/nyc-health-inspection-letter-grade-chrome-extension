@@ -30,22 +30,22 @@ function cacheSelectors(site) {
 
     switch(site) {
         case 'yelp':
-            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="wrap"]/div[2]/yelp-react-root/div/div[3]/div/div/div[2]/div/div[2]/div/div/section[1]');
+            selectors.insertCardBeforeThisElement = getElementByXpath('/html/body/yelp-react-root/div[1]/div[4]/div/div/div[2]/div/div[2]/div/aside/div');
             break;
         case 'menupages':
             selectors.insertCardBeforeThisElement = document.querySelector('#cart');
             break;
         case 'opentable':
-            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="js-page"]/div[2]/aside/div/div[2]/div/div[2]');
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="mainContent"]/div/div[2]/div[2]/section/div/div/h4');
             break;
         case 'grubhub':
-            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner');
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="navSection-categories"]/div[2]/span/div/div/span/div');
             break;
         case 'seamless':
-            selectors.insertCardBeforeThisElement = document.querySelector('#navSection-menu > div.s-container-lg.restaurantPage-menuSections-inner');
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="navSection-categories"]/div[2]/span/div/div/span/div');
             break;
         case 'slicelife':
-            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="app"]/div/div/div[4]/div[1]/div[3]');
+            selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="app"]/div/div/header/div[2]/div/div/div/div/div[1]/div/div[1]/ul');
             break;
         case 'ubereats':
             selectors.insertCardBeforeThisElement = getElementByXpath('//*[@id="main-content"]/div[4]/div/div[2]');

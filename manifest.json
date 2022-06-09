@@ -3,7 +3,7 @@
 
   "name": "NYC Restaurant Health Inspection Letter Grade",
   "description": "Show health inspection grade for restaurants in New York City on Uber Eats, Yelp, Grubhub, Seamless, Slice, Menupages, & Opentable",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "homepage_url": "https://github.com/CarlosCuevas",
   "icons": {
     "16": "icons/icon16.png",
